@@ -29,6 +29,7 @@ deploy: install
 manifests:
 	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go all
 	kustomize build config/default > config/samples/operator.yaml
+	cp config/samples/operator.yaml examples/generic/operator.yaml
 
 # Run go fmt against code
 fmt:
