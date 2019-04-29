@@ -92,6 +92,10 @@ func (s *ScyllaConfig) setupScyllaYAML() error {
 	cfg["cluster_name"] = m.Cluster
 	cfg["rpc_address"] = "0.0.0.0"
 	cfg["endpoint_snitch"] = "GossipingPropertyFileSnitch"
+	if m.Bootstrapped {
+		log.Info("Member is already bootstrapped, starting with replace_address_first_boot option.")
+		cfg["replace_address_first_boot"] = m.IP
+	}
 
 	overrideYAMLBytes, err := yaml.Marshal(cfg)
 	if err != nil {
@@ -129,7 +133,7 @@ func (s *ScyllaConfig) setupJolokia() error {
 	}{
 		{
 			flag:  "host",
-			value: "localhost",
+			value: naming.JolokiaHost,
 		},
 		{
 			flag:  "port",
@@ -171,7 +175,7 @@ func (s *ScyllaConfig) setupJolokia() error {
 func (s *ScyllaConfig) setupEntrypoint() (*exec.Cmd, error) {
 	m := s.member
 	// Get seeds
-	seeds, err := m.GetSeeds(s.kubeClient)
+	seeds, err := m.GetSeeds(s.Client)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting seeds")
 	}
@@ -263,8 +267,8 @@ func getCPUsAllowedList(procFile string) (string, error) {
 	procStatus := string(statusFile[:])
 	startIndex := strings.Index(procStatus, "Cpus_allowed_list:")
 
-	if err != nil {
-		return "", fmt.Errorf("failed to get process status: %s", err.Error())
+	if startIndex < 0 {
+		return "", errors.New("failed to get process status")
 	}
 	endIndex := startIndex + strings.Index(procStatus[startIndex:], "\n")
 	cpusAllowed := strings.TrimSpace(procStatus[startIndex+len("Cpus_allowed_list:") : endIndex])

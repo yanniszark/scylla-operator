@@ -1,10 +1,10 @@
 package naming
 
 import (
-	"fmt"
 	scyllav1alpha1 "github.com/scylladb/scylla-operator/pkg/apis/scylla/v1alpha1"
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/labels"
+	"k8s.io/apimachinery/pkg/selection"
 )
 
 // ClusterLabels returns a map of label keys and values
@@ -52,8 +52,19 @@ func RackSelector(r scyllav1alpha1.RackSpec, c *scyllav1alpha1.Cluster) labels.S
 	return sel
 }
 
-func SelectorForSeeds(clusterName string) string {
-	return fmt.Sprintf("%s,%s=%s", SeedLabel, ClusterNameLabel, clusterName)
+func SeedsSelector(clusterName string) labels.Selector {
+	seedsLabelSet := labels.Set(
+		map[string]string{
+			ClusterNameLabel: clusterName,
+		},
+	)
+	sel := labels.SelectorFromSet(seedsLabelSet)
+	req, err := labels.NewRequirement(SeedLabel, selection.Exists, nil)
+	if err != nil {
+		panic("invalid requirement")
+	}
+	sel.Add(*req)
+	return sel
 }
 
 func recommendedLabels() map[string]string {

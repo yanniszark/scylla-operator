@@ -57,3 +57,11 @@ func IndexFromName(n string) (int32, error) {
 
 	return int32(index), nil
 }
+
+func LocalJolokiaAddress() string {
+	return JolokiaAddressForHost(JolokiaHost)
+}
+
+func JolokiaAddressForHost(host string) string {
+	return fmt.Sprintf("http://%s:%d/%s/", host, JolokiaPort, JolokiaContext)
+}

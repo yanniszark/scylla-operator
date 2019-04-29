@@ -82,14 +82,14 @@ metadata:
   namespace: scylla
 spec:
   version: 3.0.3
-  developerMode: true
   datacenter:
     name: us-east-1
     racks:
       - name: us-east-1a
         members: 3
         storage:
-          capacity: 5Gi
+          capacity: 370Gi
+          storageClassName: local-disks
         resources:
           requests:
             cpu: 1

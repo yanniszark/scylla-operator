@@ -57,20 +57,21 @@ func newReconciler(mgr manager.Manager) reconcile.Reconciler {
 
 	opts := options.GetSidecarOptions()
 	kubeClient := kubernetes.NewForConfigOrDie(mgr.GetConfig())
-	member, err := identity.Retrieve(opts.Name, opts.Namespace, kubeClient)
+
+	client, err := client.New(mgr.GetConfig(), client.Options{})
+	if err != nil {
+		log.Fatalf("Error getting dynamic client: %+v", err)
+	}
+
+	member, err := identity.Retrieve(opts.Name, opts.Namespace, client)
 	if err != nil {
 		log.Fatalf("Failed to get member: %+v", err)
 	}
 	log.Infof("Member: %v", spew.Sdump(member))
 
-	url, err := url.Parse(fmt.Sprintf("http://127.0.0.1:%d/%s/", naming.JolokiaPort, naming.JolokiaContext))
+	url, err := url.Parse(naming.LocalJolokiaAddress())
 	if err != nil {
 		log.Fatalf("Failed to parse url: %+v", err)
-	}
-
-	client, err := client.New(mgr.GetConfig(), client.Options{})
-	if err != nil {
-		log.Fatalf("Error getting dynamic client: %+v", err)
 	}
 
 	mc := &MemberController{
