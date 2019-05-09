@@ -311,7 +311,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: yanniszark/scylla-operator:v0.0-4468a16
+        image: yanniszark/scylla-operator:v0.0-002ab6f
         imagePullPolicy: Always
         name: manager
         resources:

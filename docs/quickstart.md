@@ -11,6 +11,7 @@
 
 This is a guide to deploy a Scylla Cluster in a generic Kubernetes environment, meaning that Scylla will not be deployed with the ideal performance. Scylla performs the best when it has fast disks and direct access to the cpu. This requires some extra setup, which is platform-specific. To deploy Scylla with maximum performance, follow the guide for your environment:
 
+* [Minikube](minikube.md)
 * [GKE](gke.md)
 
 ## Deploy Scylla Operator
