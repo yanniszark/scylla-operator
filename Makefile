@@ -3,20 +3,21 @@
 REPO ?= "yanniszark/scylla-operator"
 TAG ?= "v0.0-$(shell git rev-parse --short HEAD)"
 IMG ?= "${REPO}:${TAG}"
+GO ?= GO111MODULE=off go
 
 all: test local-build
 
 # Run tests
 test: generate fmt vet manifests vendor
-	go test ./pkg/... ./cmd/... -coverprofile cover.out
+	$(GO) test ./pkg/... ./cmd/... -coverprofile cover.out
 
 # Build local-build binary
 local-build: generate fmt vet vendor
-	go build -o bin/manager github.com/scylladb/scylla-operator/cmd
+	$(GO) build -o bin/manager github.com/scylladb/scylla-operator/cmd
 
 # Run against the configured Kubernetes cluster in ~/.kube/config
 run: generate fmt vet vendor
-	go run ./cmd operator --image="${IMG}" --enable-admission-webhook=false
+	$(GO) run ./cmd operator --image="${IMG}" --enable-admission-webhook=false
 
 # Install CRDs into a cluster
 install: manifests
@@ -29,7 +30,7 @@ deploy: install
 
 # Generate manifests e.g. CRD, RBAC etc.
 manifests:
-	go run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go all
+	$(GO) run vendor/sigs.k8s.io/controller-tools/cmd/controller-gen/main.go all
 	cd config && kustomize edit set image yanniszark/scylla-operator="${IMG}"
 	kustomize build config > examples/generic/operator.yaml
 	kustomize build config > examples/gke/operator.yaml
@@ -37,15 +38,15 @@ manifests:
 
 # Run go fmt against code
 fmt:
-	go fmt ./pkg/... ./cmd/...
+	$(GO) fmt ./pkg/... ./cmd/...
 
 # Run go vet against code
 vet:
-	go vet ./pkg/... ./cmd/...
+	$(GO) vet ./pkg/... ./cmd/...
 
 # Generate code
 generate:
-	go generate ./pkg/... ./cmd/...
+	$(GO) generate ./pkg/... ./cmd/...
 
 # Ensure dependencies
 vendor:
