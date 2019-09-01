@@ -72,6 +72,8 @@ type RackSpec struct {
 	Name string `json:"name"`
 	// Members is the number of Scylla instances in this rack.
 	Members int32 `json:"members"`
+	// User-provided ConfigMap applied to the specific rack.
+	ConfigMapName *string `json:"configMapName,omitempty"`
 	// Storage describes the underlying storage that Scylla will consume.
 	Storage StorageSpec `json:"storage"`
 	// Placement describes restrictions for the nodes Scylla is scheduled on.
