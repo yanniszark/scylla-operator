@@ -134,6 +134,22 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 		return errors.Wrap(err, "services watch setup failed")
 	}
 
+	///////////////////////////////////////////
+	// Watch ConfigMaps related to a Cluster //
+	///////////////////////////////////////////
+
+	err = c.Watch(
+		&source.Kind{Type: &corev1.ConfigMap{}},
+		&handler.EnqueueRequestForOwner{
+			IsController: true,
+			OwnerType:    &scyllav1alpha1.Cluster{},
+		},
+		predicate.ResourceVersionChangedPredicate{},
+	)
+	if err != nil {
+		return errors.Wrap(err, "ConfigMaps watch setup failed")
+	}
+
 	return nil
 }
 
@@ -179,6 +195,7 @@ type ClusterController struct {
 // +kubebuilder:rbac:groups=,resources=services,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=,resources=persistentvolumeclaims,verbs=get;list;watch;delete
 // +kubebuilder:rbac:groups=,resources=events,verbs=create;update;patch
+// +kubebuilder:rbac:groups=,resources=configmaps,verbs=get;list;watch
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=scylla.scylladb.com,resources=clusters,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=scylla.scylladb.com,resources=clusters/status,verbs=update

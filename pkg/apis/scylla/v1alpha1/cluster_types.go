@@ -111,8 +111,10 @@ type ClusterStatus struct {
 type RackStatus struct {
 	// Members is the current number of members requested in the specific Rack
 	Members int32 `json:"members"`
-	// ReadyMembers is the number of ready members in the specific Rack
+	// ReadyMembers is the number of ready members in the specific Rack.
 	ReadyMembers int32 `json:"readyMembers"`
+	// ConfigMapHash is the hash of the ConfigMap actually used by the Rack.
+	ConfigMapHash string `json:"configMapHash"`
 	// Conditions are the latest available observations of a rack's state.
 	Conditions []RackCondition `json:"conditions,omitempty"`
 }

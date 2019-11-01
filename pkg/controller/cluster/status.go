@@ -8,6 +8,7 @@ import (
 	"github.com/scylladb/scylla-operator/pkg/controller/cluster/util"
 	"github.com/scylladb/scylla-operator/pkg/naming"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
@@ -68,6 +69,16 @@ func (cc *ClusterController) updateStatus(cluster *scyllav1alpha1.Cluster) error
 					return errors.New(fmt.Sprintf("only last member of each rack should be decommissioning, but %d-th member of %s found decommissioning while rack had %d members", index, rack.Name, rackStatus.Members))
 				}
 			}
+		}
+
+		// Update ConfigMapHash
+		cm := &corev1.ConfigMap{}
+		err = cc.Get(context.TODO(), naming.NamespacedName(rack.ConfigMapName, cluster.Namespace), cm)
+		if apierrors.IsNotFound(err) {
+			continue
+		}
+		if err != nil {
+			return errors.WithStack(err)
 		}
 
 		// Update Status for Rack
