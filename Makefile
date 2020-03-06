@@ -69,4 +69,4 @@ publish: docker-build docker-push
 
 bin/deps:
 	mkdir -p bin/deps
-	hack/binary_deps.py bin/deps
+	LC_ALL="C.UTF-8" hack/binary_deps.py bin/deps
