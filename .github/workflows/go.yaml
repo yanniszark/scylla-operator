@@ -12,7 +12,7 @@ jobs:
     name: Build
     env:
       repository: scylladb/scylla
-      working-directory: ${{ github.workspace }}/src/github.com/${{ env.repository }}
+      working-directory: ${{ github.workspace }}/src/github.com/scylladb/scylla
       GOPATH: ${{ github.workspace }}
     runs-on: ubuntu-18.04
     steps:
@@ -31,7 +31,7 @@ jobs:
         with:
           path: bin/deps
           # format('{0}{1}', github.workspace, '/mix.lock')
-          key: ${{ runner.os }}-${{ hashFiles(format('src/github.com/{0}/hack/binary_deps.py', 'scylladb/scylla-operator')) }}
+          key: ${{ runner.os }}-${{ hashFiles(format('src/github.com/{0}/hack/binary_deps.py', env.repository)) }}
   
       - name: Install tools
         if: steps['cache-tools'].outputs['cache-hit'] != 'true'
