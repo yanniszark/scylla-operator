@@ -8,6 +8,7 @@ IMG ?= "$(REPO):$(TAG)"
 DOCKER_BUILDKIT = 1
 GO111MODULE = off
 KUBEBUILDER_ASSETS = $(CURDIR)/bin/deps
+GOROOT = $(CURDIR)/bin/deps/go
 PATH := $(CURDIR)/bin/deps:$(CURDIR)/bin/deps/go/bin:$(PATH)
 
 all: test local-build
