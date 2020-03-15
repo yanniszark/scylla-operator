@@ -29,7 +29,8 @@ jobs:
         uses: actions/cache@v1
         with:
           path: bin/deps
-          key: ${{ runner.os }}-${{ hashFiles('${{ env.working-directory }}/hack/binary_deps.py') }}
+          # format('{0}{1}', github.workspace, '/mix.lock')
+          key: ${{ runner.os }}-${{ hashFiles(format('src/github.com/{0}/hack/binary_deps.py', github.repository) }}
   
       - name: Install tools
         if: steps['cache-tools'].outputs['cache-hit'] != 'true'
