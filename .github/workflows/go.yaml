@@ -11,6 +11,7 @@ jobs:
   build:
     name: Build
     env:
+      working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}
       GOPATH: ${{ github.workspace }}
     runs-on: ubuntu-18.04
     steps:
@@ -28,15 +29,15 @@ jobs:
         uses: actions/cache@v1
         with:
           path: bin/deps
-          key: ${{ runner.os }}-${{ hashFiles('hack/binary_deps.py') }}
+          key: ${{ runner.os }}-${{ hashFiles('${{ env.working-directory }}/hack/binary_deps.py') }}
   
       - name: Install tools
         if: steps['cache-tools'].outputs['cache-hit'] != 'true'
-        working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}
+        working-directory: ${{ env.working-directory }}
         run: make bin/deps
   
       - name: Build
-        working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}
+        working-directory: ${{ env.working-directory }}
         run: make local-build
 
 # vendor - add deps
